@@ -7,4 +7,5 @@ import com.stu.benchmark.domain.enrollment.entity.Enrollment;
 
 @Repository
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
+	boolean existsByStudentIdAndCourseId(Long studentId, Long courseId);
 }
