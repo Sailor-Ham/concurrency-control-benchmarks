@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS student
     updated_at     DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
 
     PRIMARY KEY pk_student (student_id),
-    UNIQUE KEY uk_student_number (student_number)
+    UNIQUE KEY uk_student_student_number (student_number)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci
