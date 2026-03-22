@@ -2,7 +2,7 @@
 name: "🧪 Research Task"
 about: "논문 연구 관련 작업이나 기능 구현을 정의합니다."
 title: "[TASK] "
-labels: ["experiment"]
+labels: ["enhancement"]
 assignees: "Sailor-Ham"
 ---
 
