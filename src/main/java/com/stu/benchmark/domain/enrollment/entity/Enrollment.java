@@ -5,17 +5,11 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 
-import com.stu.benchmark.domain.course.entity.Course;
-import com.stu.benchmark.domain.student.entity.Student;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,21 +37,24 @@ public class Enrollment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "student_id", nullable = false)
-	Student student;
+	@Column(name = "student_id", nullable = false)
+	Long studentId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "course_id", nullable = false)
-	Course course;
+	@Column(name = "course_id", nullable = false)
+	Long courseId;
 
 	@CreationTimestamp
 	@Column(nullable = false, updatable = false)
 	LocalDateTime createdAt;
 
 	@Builder
-	public Enrollment(Student student, Course course) {
-		this.student = student;
-		this.course = course;
+	public Enrollment(Long studentId, Long courseId) {
+
+		if (studentId == null || courseId == null) {
+			throw new IllegalArgumentException("studentId와 courseId는 null일 수 없습니다.");
+		}
+		
+		this.studentId = studentId;
+		this.courseId = courseId;
 	}
 }

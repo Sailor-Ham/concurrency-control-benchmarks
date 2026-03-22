@@ -56,6 +56,15 @@ public class Student {
 
 	@Builder
 	public Student(String studentNumber, String name) {
+
+		if (studentNumber == null || studentNumber.isBlank()) {
+			throw new IllegalArgumentException("학번은 필수입니다.");
+		}
+
+		if (name == null || name.isBlank()) {
+			throw new IllegalArgumentException("이름은 필수입니다.");
+		}
+
 		this.studentNumber = studentNumber;
 		this.name = name;
 	}
