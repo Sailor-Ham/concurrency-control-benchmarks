@@ -17,6 +17,11 @@ spring:
       minimum-idle: 20
       connection-timeout: 5000
       pool-name: ConcurrencyTestPool
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
   jpa:
     hibernate:
       ddl-auto: validate

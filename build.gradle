@@ -30,7 +30,9 @@ dependencies {
 
     // Persistence
     runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.apache.commons:commons-pool2'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // Tools
     compileOnly 'org.projectlombok:lombok'
