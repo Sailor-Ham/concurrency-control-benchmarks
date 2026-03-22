@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 import com.stu.benchmark.domain.course.entity.Course;
 import com.stu.benchmark.domain.course.repository.CourseRepository;
@@ -19,6 +20,7 @@ import com.stu.benchmark.global.config.TestConfig;
 
 @SpringBootTest
 @Import(TestConfig.class)
+@TestPropertySource(properties = "spring.jpa.hibernate.ddl-auto=create-drop")
 class EnrollmentServiceNoLockTest {
 
 	@Autowired
@@ -105,6 +107,20 @@ class EnrollmentServiceNoLockTest {
 		assertThatThrownBy(() -> enrollmentService.enroll(request))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("강의가 존재하지 않습니다.");
+	}
+
+	@Test
+	@DisplayName("[NoLock] 같은 학생이 동일 강의에 중복 수강신청을 하면 예외가 발생합니다.")
+	void enrollWithNoLock_should_throwIllegalStateException_when_duplicateEnrollment() {
+
+		// given
+		EnrollmentCreateRequest request = new EnrollmentCreateRequest(testStudentId, testCourseId);
+		enrollmentService.enroll(request);
+
+		// when & then
+		assertThatThrownBy(() -> enrollmentService.enroll(request))
+			.isInstanceOf(IllegalStateException.class)
+			.hasMessage("해당 강의는 이미 수강신청되었습니다.");
 	}
 
 	@Test
