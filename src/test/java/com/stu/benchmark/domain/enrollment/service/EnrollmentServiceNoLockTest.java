@@ -52,7 +52,7 @@ class EnrollmentServiceNoLockTest {
 	@BeforeEach
 	void setUp() {
 
-		// 기존 데이터 초기화 (FK 제약: Enrollment → Student/Course 순서로 삭제)
+		// 기존 데이터 초기화
 		enrollmentRepository.deleteAllInBatch();
 		studentRepository.deleteAllInBatch();
 		courseRepository.deleteAllInBatch();
