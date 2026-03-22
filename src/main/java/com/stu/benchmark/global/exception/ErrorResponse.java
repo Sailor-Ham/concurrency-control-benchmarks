@@ -16,9 +16,11 @@ public record ErrorResponse(
 	String details
 ) {
 
+	private static final ZoneId ZONE_SEOUL = ZoneId.of("Asia/Seoul");
+
 	public static ErrorResponse of(HttpStatus status, String message, String details) {
 		return new ErrorResponse(
-			ZonedDateTime.now(ZoneId.of("Asia/Seoul")),
+			ZonedDateTime.now(ZONE_SEOUL),
 			status.value(),
 			status.name(),
 			message,

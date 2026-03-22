@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
 
 		ErrorResponse response = ErrorResponse.of(
 			HttpStatus.BAD_REQUEST,
-			"Validation failed",
+			"VALIDATION_FAILED",
 			details
 		);
 
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
 
 		ErrorResponse response = ErrorResponse.of(
 			HttpStatus.BAD_REQUEST,
-			"Invalid request",
+			"INVALID_REQUEST",
 			"잘못된 요청 파라미터가 전달되었습니다: " + e.getMessage()
 		);
 
@@ -88,7 +88,7 @@ public class GlobalExceptionHandler {
 
 		ErrorResponse response = ErrorResponse.of(
 			HttpStatus.CONFLICT,
-			"Business rule violation",
+			"DATA_INTEGRITY_VIOLATION",
 			details
 		);
 
@@ -110,7 +110,7 @@ public class GlobalExceptionHandler {
 
 		ErrorResponse response = ErrorResponse.of(
 			HttpStatus.CONFLICT,
-			"Business rule violation",
+			"BUSINESS_RULE_VIOLATION",
 			e.getMessage()
 		);
 
@@ -145,7 +145,7 @@ public class GlobalExceptionHandler {
 	 * 데이터베이스 락(Lock) 경합 실패 및 타임아웃 시 발생
 	 */
 	@ExceptionHandler({PessimisticLockingFailureException.class, LockTimeoutException.class})
-	public ResponseEntity<ErrorResponse> handlePessimisticLockingFailureException(
+	public ResponseEntity<ErrorResponse> handleLockConflictException(
 		Exception e,
 		HttpServletRequest request
 	) {
@@ -154,7 +154,7 @@ public class GlobalExceptionHandler {
 
 		ErrorResponse response = ErrorResponse.of(
 			HttpStatus.CONFLICT,
-			"Resource is currently locked",
+			"PESSIMISTIC_LOCK_CONFLICT",
 			"데이터베이스 락 경합으로 인해 요청을 처리할 수 없습니다. 잠시 후 다시 시도해주세요."
 		);
 
@@ -199,7 +199,7 @@ public class GlobalExceptionHandler {
 
 		ErrorResponse response = ErrorResponse.of(
 			HttpStatus.INTERNAL_SERVER_ERROR,
-			"An unexpected error occurred",
+			"INTERNAL_SERVER_ERROR",
 			"서버 내부 오류가 발생했습니다. 시스템 관리자에게 문의하세요."
 		);
 
