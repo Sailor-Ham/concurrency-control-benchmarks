@@ -48,4 +48,32 @@ public class EnrollmentService {
 				.build()
 		);
 	}
+
+	/**
+	 * [Case 1: Pessimistic Lock] 강의 엔터티에 대해 Pessimistic Lock을 적용하여 동시성 문제를 방지하는 수강신청
+	 */
+	@Transactional
+	public void enrollWithPessimisticLock(EnrollmentCreateRequest request) {
+
+		// 학생, 강의(비관적 락) 조회
+		Student student = studentRepository.findById(request.studentId())
+			.orElseThrow(() -> new IllegalArgumentException("학생이 존재하지 않습니다."));
+		Course course = courseRepository.findByIdWithPessimisticLock(request.courseId())
+			.orElseThrow(() -> new IllegalArgumentException("강의가 존재하지 않습니다."));
+
+		// 수강신청
+		if (enrollmentRepository.existsByStudentIdAndCourseId(student.getId(), course.getId())) {
+			throw new IllegalStateException("해당 강의는 이미 수강신청되었습니다.");
+		}
+
+		course.increaseEnrolledCount();
+
+		// 수강신청 정보 저장
+		enrollmentRepository.save(
+			Enrollment.builder()
+				.studentId(student.getId())
+				.courseId(course.getId())
+				.build()
+		);
+	}
 }

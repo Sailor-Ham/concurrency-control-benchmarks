@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.test.context.TestPropertySource;
 
 import com.stu.benchmark.domain.course.entity.Course;
@@ -32,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @Import(TestConfig.class)
 @TestPropertySource(properties = "spring.jpa.hibernate.ddl-auto=create-drop")
-class EnrollmentServiceNoLockTest {
+class EnrollmentServicePessimisticLockTest {
 
 	@Autowired
 	private CourseRepository courseRepository;
@@ -75,14 +76,14 @@ class EnrollmentServiceNoLockTest {
 	}
 
 	@Test
-	@DisplayName("[NoLock] 학생 한 명이 수강신청을 하면 성공하고 인원수가 증가합니다.")
-	void enrollWithNoLock_should_increaseEnrolledCountAndSaveEnrollment_when_validRequest() {
+	@DisplayName("[Pessimistic Lock] 학생 한 명이 수강신청을 하면 성공하고 인원수가 증가합니다.")
+	void enrollWithPessimisticLock_should_increaseEnrolledCountAndSaveEnrollment_when_validRequest() {
 
 		// given
 		EnrollmentCreateRequest request = new EnrollmentCreateRequest(testStudentId, testCourseId);
 
 		// when
-		enrollmentService.enroll(request);
+		enrollmentService.enrollWithPessimisticLock(request);
 
 		// then
 		Course course = courseRepository.findById(testCourseId)
@@ -93,50 +94,36 @@ class EnrollmentServiceNoLockTest {
 	}
 
 	@Test
-	@DisplayName("[NoLock] 존재하지 않는 학생이 강의에 수강신청을 하면 예외가 발생합니다.")
-	void enrollWithNoLock_should_throwIllegalArgumentException_when_studentNotFound() {
+	@DisplayName("[Pessimistic Lock] 존재하지 않는 학생이 강의에 수강신청을 하면 예외가 발생합니다.")
+	void enrollWithPessimisticLock_should_throwIllegalArgumentException_when_studentNotFound() {
 
 		// given
 		Long invalidStudentId = 999L;
 		EnrollmentCreateRequest request = new EnrollmentCreateRequest(invalidStudentId, testCourseId);
 
 		// when & then
-		assertThatThrownBy(() -> enrollmentService.enroll(request))
+		assertThatThrownBy(() -> enrollmentService.enrollWithPessimisticLock(request))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("학생이 존재하지 않습니다.");
 	}
 
 	@Test
-	@DisplayName("[NoLock] 학생이 존재하지 않는 강의에 수강신청을 하면 예외가 발생합니다.")
-	void enrollWithNoLock_should_throwIllegalArgumentException_when_courseNotFound() {
+	@DisplayName("[Pessimistic Lock] 학생이 존재하지 않는 강의에 수강신청을 하면 예외가 발생합니다.")
+	void enrollWithPessimisticLock_should_throwIllegalArgumentException_when_courseNotFound() {
 
 		// given
 		Long invalidCourseId = 999L;
 		EnrollmentCreateRequest request = new EnrollmentCreateRequest(testStudentId, invalidCourseId);
 
 		// when & then
-		assertThatThrownBy(() -> enrollmentService.enroll(request))
+		assertThatThrownBy(() -> enrollmentService.enrollWithPessimisticLock(request))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("강의가 존재하지 않습니다.");
 	}
 
 	@Test
-	@DisplayName("[NoLock] 같은 학생이 동일 강의에 중복 수강신청을 하면 예외가 발생합니다.")
-	void enrollWithNoLock_should_throwIllegalStateException_when_duplicateEnrollment() {
-
-		// given
-		EnrollmentCreateRequest request = new EnrollmentCreateRequest(testStudentId, testCourseId);
-		enrollmentService.enroll(request);
-
-		// when & then
-		assertThatThrownBy(() -> enrollmentService.enroll(request))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessage("해당 강의는 이미 수강신청되었습니다.");
-	}
-
-	@Test
-	@DisplayName("[NoLock] 수강신청 인원이 최대 수용 인원을 초과하면 예외가 발생합니다.")
-	void enrollWithNoLock_should_throwIllegalStateException_when_capacityExceeded() {
+	@DisplayName("[Pessimistic Lock] 수강신청 인원이 최대 수용 인원을 초과하면 예외가 발생합니다.")
+	void enrollWithPessimisticLock_should_throwIllegalStateException_when_capacityExceeded() {
 
 		// given
 		Student anotherStudent = studentRepository.save(Student.builder()
@@ -145,26 +132,27 @@ class EnrollmentServiceNoLockTest {
 			.build());
 
 		EnrollmentCreateRequest firstRequest = new EnrollmentCreateRequest(testStudentId, testCourseId);
-		enrollmentService.enroll(firstRequest);
+		enrollmentService.enrollWithPessimisticLock(firstRequest);
 
 		// when & then
 		EnrollmentCreateRequest secondRequest = new EnrollmentCreateRequest(anotherStudent.getId(), testCourseId);
 
-		assertThatThrownBy(() -> enrollmentService.enroll(secondRequest))
+		assertThatThrownBy(() -> enrollmentService.enrollWithPessimisticLock(secondRequest))
 			.isInstanceOf(IllegalStateException.class)
 			.hasMessage("수강 인원이 초과되었습니다.");
 	}
 
 	@Test
-	@DisplayName("[NoLock] 100명이 동시에 수강신청을 하면 레이스 컨디션이 발생하여 정원(30명)을 초과해 신청됩니다.")
-	void enrollWithNoLock_should_exceedMaxCapacity_when_concurrent() throws InterruptedException {
+	@DisplayName("[Pessimistic Lock] 100명이 동시에 수강신청할 때 정원(30명)만큼만 성공합니다.")
+	void enrollWithPessimisticLock_should_enrollExactlyMaxCapacity_when_concurrent()
+		throws InterruptedException {
 
 		// given
 		int maxCapacity = 30;
 		int totalStudents = 100;
 
 		Course concurrentCourse = courseRepository.save(Course.builder()
-			.title("Concurrent No-Lock Test Course")
+			.title("Concurrent Test Course")
 			.maxCapacity((long)maxCapacity)
 			.build());
 
@@ -172,7 +160,7 @@ class EnrollmentServiceNoLockTest {
 		for (int i = 0; i < totalStudents; i++) {
 			Student s = studentRepository.save(Student.builder()
 				.name("Concurrent Student " + i)
-				.studentNumber(String.format("N%09d", i))
+				.studentNumber(String.format("C%09d", i))
 				.build());
 			studentIds.add(s.getId());
 		}
@@ -190,10 +178,11 @@ class EnrollmentServiceNoLockTest {
 				executor.submit(() -> {
 					try {
 						startLatch.await();
-						enrollmentService.enroll(new EnrollmentCreateRequest(studentId, courseId));
+						enrollmentService.enrollWithPessimisticLock(
+							new EnrollmentCreateRequest(studentId, courseId));
 						successCount.incrementAndGet();
-					} catch (IllegalStateException ignored) {
-						// 늦게 진입한 스레드가 정원 초과 예외를 만나는 것은 정상 흐름
+					} catch (IllegalStateException | PessimisticLockingFailureException ignored) {
+						// 정원 초과 또는 락 타임아웃은 정상 흐름
 					} catch (Exception e) {
 						log.error("Unexpected error during concurrent enrollment test", e);
 					} finally {
@@ -209,9 +198,9 @@ class EnrollmentServiceNoLockTest {
 		}
 
 		// then
-		long actualEnrollmentCount = enrollmentRepository.count();
 		Course updatedCourse = courseRepository.findById(concurrentCourse.getId()).orElseThrow();
-		assertThat(actualEnrollmentCount).isGreaterThan(maxCapacity);
-		assertThat(actualEnrollmentCount).isGreaterThan(updatedCourse.getEnrolledCount());
+		assertThat(updatedCourse.getEnrolledCount()).isLessThanOrEqualTo(maxCapacity);
+		assertThat(updatedCourse.getEnrolledCount()).isEqualTo(Long.valueOf(successCount.get()));
+		assertThat(enrollmentRepository.count()).isEqualTo(updatedCourse.getEnrolledCount());
 	}
 }

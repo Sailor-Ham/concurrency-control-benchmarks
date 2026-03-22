@@ -29,4 +29,15 @@ public class EnrollmentController {
 		enrollmentService.enroll(request);
 		return ResponseEntity.ok("[Baseline] 수강신청이 성공적으로 완료되었습니다.");
 	}
+
+	/**
+	 * Case 1: Pessimistic Lock API
+	 */
+	@PostMapping("/pessimistic-lock")
+	public ResponseEntity<String> enrollWithPessimisticLock(
+		@Valid @RequestBody EnrollmentCreateRequest request
+	) {
+		enrollmentService.enrollWithPessimisticLock(request);
+		return ResponseEntity.ok("[Case 1: Pessimistic Lock] 수강신청이 성공적으로 완료되었습니다.");
+	}
 }
