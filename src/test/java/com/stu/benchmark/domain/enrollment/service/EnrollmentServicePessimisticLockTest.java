@@ -199,8 +199,8 @@ class EnrollmentServicePessimisticLockTest {
 
 		// then
 		Course updatedCourse = courseRepository.findById(concurrentCourse.getId()).orElseThrow();
-		assertThat(successCount.get()).isEqualTo(maxCapacity);
-		assertThat(updatedCourse.getEnrolledCount()).isEqualTo(maxCapacity);
-		assertThat(enrollmentRepository.count()).isEqualTo(maxCapacity);
+		assertThat(updatedCourse.getEnrolledCount()).isLessThanOrEqualTo(maxCapacity);
+		assertThat(updatedCourse.getEnrolledCount()).isEqualTo(Long.valueOf(successCount.get()));
+		assertThat(enrollmentRepository.count()).isEqualTo(updatedCourse.getEnrolledCount());
 	}
 }

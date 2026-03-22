@@ -211,7 +211,7 @@ class EnrollmentServiceNoLockTest {
 		// then
 		long actualEnrollmentCount = enrollmentRepository.count();
 		Course updatedCourse = courseRepository.findById(concurrentCourse.getId()).orElseThrow();
-		assertThat(actualEnrollmentCount).isNotEqualTo(maxCapacity);
-		assertThat(updatedCourse.getEnrolledCount()).isNotEqualTo(successCount.get());
+		assertThat(actualEnrollmentCount).isGreaterThan(maxCapacity);
+		assertThat(actualEnrollmentCount).isGreaterThan(updatedCourse.getEnrolledCount());
 	}
 }
