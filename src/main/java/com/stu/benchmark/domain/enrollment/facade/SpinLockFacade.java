@@ -1,5 +1,7 @@
 package com.stu.benchmark.domain.enrollment.facade;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
 
 import com.stu.benchmark.domain.enrollment.dto.EnrollmentCreateRequest;
@@ -24,12 +26,15 @@ public class SpinLockFacade {
 	 */
 	public void enrollWithSpinLock(EnrollmentCreateRequest request) {
 
+		// 락 소유권을 증명할 현재 요청만의 고유 식별자(UUID) 생성
+		String lockValue = UUID.randomUUID().toString();
+
 		// 락 획득을 기다릴 최대 시간 (3초로 설정, 필요 시 조정)
 		long timeoutMillis = 3000;
 		long startTime = System.currentTimeMillis();
 
 		// Spin Lock: 락을 얻을 때까지 sleep하면서 while 문 계속 시도
-		while (!redisLockRepository.lock(request.courseId())) {
+		while (!redisLockRepository.lock(request.courseId(), lockValue)) {
 
 			// 타임아웃 검사: 3초 이상 락을 얻지 못했으면 예외 발생
 			if (System.currentTimeMillis() - startTime > timeoutMillis) {
@@ -52,7 +57,7 @@ public class SpinLockFacade {
 		try {
 			enrollmentService.enroll(request);
 		} finally {
-			redisLockRepository.unlock(request.courseId());
+			redisLockRepository.unlock(request.courseId(), lockValue);
 		}
 	}
 }
