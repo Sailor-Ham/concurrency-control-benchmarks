@@ -18,6 +18,11 @@ spring:
     hibernate:
       ddl-auto: validate
 
+redisson:
+  lock:
+    wait-time: 5000 # 락 획득 대기 시간 (ms)
+    lease-time: 2000 # 락 유지 시간 (ms)
+
 logging:
   level:
     root: warn
