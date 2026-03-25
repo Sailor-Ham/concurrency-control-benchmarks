@@ -40,4 +40,4 @@ ENV SPRING_PROFILES_ACTIVE=bench
 EXPOSE 8080
 
 # 컨테이너 실행 명령
-ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -XX:+UseContainerSupport -jar app.jar"]

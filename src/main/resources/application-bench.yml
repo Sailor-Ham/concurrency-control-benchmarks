@@ -9,8 +9,8 @@ spring:
       lettuce:
         pool:
           max-active: 100 # 동시에 사용할 수 있는 최대 커넥션 개수
-          max-idle: 50  # 대기 상태로 유지할 최대 커넥션
-          min-idle: 10  # 최소 유지 커넥션
+          max-idle: 50 # 대기 상태로 유지할 최대 커넥션
+          min-idle: 10 # 최소 유지 커넥션
           max-wait: 3000ms # 커넥션 획득 대기 타임아웃
           time-between-eviction-runs: 10000ms # 유휴 커넥션 검사 주기
   jpa:
@@ -28,4 +28,8 @@ logging:
   level:
     root: warn
     com.stu.benchmark: info
-    org.hibernate.SQL: error  # I/O 부하 최소화
+    org.hibernate.SQL: error # I/O 부하 최소화
+
+management:
+  tracing:
+    enabled: false

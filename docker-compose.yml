@@ -150,10 +150,77 @@ services:
     networks:
       - concurrency-control-network
     healthcheck:
-      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 5s
       timeout: 5s
       retries: 5
+    restart: no
+
+  # Redis Exporter
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.82.0
+    container_name: redis-exporter
+    environment:
+      - REDIS_ADDR=redis:6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    ports:
+      - "${REDIS_EXPORTER_PORT}:9121"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - concurrency-control-network
+    restart: no
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:v3.10.0
+    container_name: prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+      - "--web.enable-remote-write-receiver"
+    ports:
+      - "${PROMETHEUS_PORT}:9090"
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - concurrency-control-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --spider http://localhost:9090/-/healthy || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: no
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:12.4.1
+    container_name: grafana
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - TZ=Asia/Seoul
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    networks:
+      - concurrency-control-network
     restart: no
 
 networks:
@@ -163,3 +230,5 @@ networks:
 volumes:
   mysql_data:
   redis_data:
+  prometheus_data:
+  grafana_data:

@@ -12,7 +12,7 @@ spring:
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
     hikari:
-      # 공통 기봇값은 보수적으로 설정하고 bench에서 확작
+      # 공통 기본값은 보수적으로 설정하고 bench에서 확작
       maximum-pool-size: 64
       minimum-idle: 20
       connection-timeout: 5000
@@ -30,12 +30,31 @@ server:
   port: 8080
   tomcat:
     threads:
-      max: 200  # 동시에 로직을 수행할 스레드 수
+      max: 200 # 동시에 로직을 수행할 스레드 수
     accept-count: 500 # 스레드 할당 전 대기 큐 (Vuser 600 수용 가능)
-    max-connections: 1000  # 물리적 TCP 연결 최대치
+    max-connections: 1000 # 물리적 TCP 연결 최대치
     mbeanregistry:
       enabled: true
 
 logging:
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        spring.data.repository.invocations: true
+        benchmark.lock.wait.time: true
+        benchmark.lock.service.time: true
+      minimum-expected-value:
+        http.server.requests: 10ms
+      maximum-expected-value:
+        http.server.requests: 10s
