@@ -150,8 +150,38 @@ services:
     networks:
       - concurrency-control-network
     healthcheck:
-      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: no
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:v3.10.0
+    container_name: prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+      - "--web.enable-remote-write-receiver"
+    ports:
+      - "${PROMETHEUS_PORT}:9090"
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - concurrency-control-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --spider http://localhost:9090/-/healthy || exit 1",
+        ]
+      interval: 10s
       timeout: 5s
       retries: 5
     restart: no
@@ -163,3 +193,4 @@ networks:
 volumes:
   mysql_data:
   redis_data:
+  prometheus_data:
