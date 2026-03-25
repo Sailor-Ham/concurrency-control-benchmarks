@@ -1,4 +1,4 @@
-package com.stu.benchmark.domain.course.dto;
+package com.stu.benchmark.domain.benchmark.dto;
 
 public record BenchmarkResetResponse(
 	Long enrolledCount,

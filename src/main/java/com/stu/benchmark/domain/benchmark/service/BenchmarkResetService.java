@@ -5,7 +5,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.stu.benchmark.domain.course.dto.BenchmarkResetResponse;
+import com.stu.benchmark.domain.benchmark.dto.BenchmarkResetResponse;
 import com.stu.benchmark.domain.course.entity.Course;
 import com.stu.benchmark.domain.course.repository.CourseRepository;
 import com.stu.benchmark.domain.enrollment.repository.EnrollmentRepository;

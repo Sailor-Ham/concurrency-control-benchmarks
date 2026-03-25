@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.stu.benchmark.domain.benchmark.dto.BenchmarkResetResponse;
 import com.stu.benchmark.domain.benchmark.service.BenchmarkResetService;
-import com.stu.benchmark.domain.course.dto.BenchmarkResetResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
