@@ -34,7 +34,7 @@ RUN apk add --no-cache tzdata && \
 COPY --from=builder /build/build/libs/*-SNAPSHOT.jar app.jar
 
 # 환경 변수 기본값 설정
-ENV SPRING_PROFILES_ACTIVE=prod
+ENV SPRING_PROFILES_ACTIVE=bench
 
 # 애플리케이션 포트
 EXPOSE 8080
