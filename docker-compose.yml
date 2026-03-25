@@ -223,6 +223,54 @@ services:
       - concurrency-control-network
     restart: no
 
+  # nGrinder Controller
+  ngrinder-controller:
+    platform: linux/amd64
+    image: ngrinder/controller:3.5.9-p1
+    container_name: ngrinder-controller
+    environment:
+      - JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom
+      - TZ=Asia/Seoul
+      - NGRINDER_HOME=/opt/ngrinder-controller
+    ports:
+      - "${NGRINDER_CONTROLLER_PORT}:80"
+      - "${NGRINDER_AGENT_PORT}:16001"
+      - "12000-12009:12000-12009"
+    volumes:
+      - ngrinder_controller_data:/opt/ngrinder-controller
+    networks:
+      - concurrency-control-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --spider http://localhost:80 || exit 1",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    restart: no
+
+  # nGrinder Agent
+  ngrinder-agent:
+    platform: linux/amd64
+    image: ngrinder/agent:3.5.9-p1
+    container_name: ngrinder-agent
+    command: ngrinder-controller:80
+    environment:
+      - GRINDER_AGENT_JVM_OPTS=-Xms3g -Xmx3g
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    depends_on:
+      ngrinder-controller:
+        condition: service_healthy
+    networks:
+      - concurrency-control-network
+    restart: no
+
 networks:
   concurrency-control-network:
     driver: bridge
@@ -232,3 +280,4 @@ volumes:
   redis_data:
   prometheus_data:
   grafana_data:
+  ngrinder_controller_data:
