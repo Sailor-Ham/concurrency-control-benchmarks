@@ -73,6 +73,16 @@ class EnrollmentBurstTest {
             }
         }
 
+        //  [푸아송 리스트 생성 및 로깅]
+        // 실제 쓰레드를 제어하진 않지만, 이번 실험의 '부하 설계도'를 기록하는 역할입니다.
+        arrivalSchedule = (1..TEST_DURATION_SECONDS).collect { getPoissonCount(AVERAGE_LAMBDA) }
+
+        grinder.logger.info("==================================================")
+        grinder.logger.info("[실험 설계 기록] 프로세스 {}번의 부하 분포 예측", grinder.processNumber)
+        grinder.logger.info("평균 유입률(λ): {} users/sec", AVERAGE_LAMBDA)
+        grinder.logger.info("초당 유입 분포(Poisson): {}", arrivalSchedule)
+        grinder.logger.info("==================================================")
+
         test.record(request)
 
         // [프로세스별 학생 ID 할당] 중복 ID 방지를 위해 범위를 나눔
