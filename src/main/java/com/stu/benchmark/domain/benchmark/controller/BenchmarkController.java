@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Profile("bench")
 @RequiredArgsConstructor
-@RequestMapping("/v1/benchmark")
+@RequestMapping("/v1/benchmarks")
 public class BenchmarkController {
 
 	private final BenchmarkResetService benchmarkResetService;

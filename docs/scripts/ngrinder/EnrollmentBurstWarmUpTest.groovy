@@ -50,7 +50,7 @@ class EnrollmentBurstWarmUpTest {
     public static final String STRATEGY = "no-lock"
 
     public static String targetUrl = "http://${TARGET_IP}:${TARGET_PORT}/v1/enrollments/${STRATEGY}"
-    public static String resetUrl = "http://${TARGET_IP}:${TARGET_PORT}/v1/benchmark/reset"
+    public static String resetUrl = "http://${TARGET_IP}:${TARGET_PORT}/v1/benchmarks/reset"
 
     @BeforeProcess
     public static void beforeProcess() {
