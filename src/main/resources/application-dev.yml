@@ -10,9 +10,7 @@ spring:
 
 logging:
   level:
-    com.stu.benchmark: debug
     org.hibernate.SQL: debug
-    org.hibernate.orm.jdbc.bind: trace
 
 management:
   tracing:

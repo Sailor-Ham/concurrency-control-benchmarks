@@ -27,8 +27,9 @@ redisson:
 logging:
   level:
     root: warn
-    com.stu.benchmark: info
-    org.hibernate.SQL: error # I/O 부하 최소화
+    com.stu.benchmark: debug
+    org.hibernate.SQL: error
+    com.zaxxer.hikari: debug
 
 management:
   tracing:
