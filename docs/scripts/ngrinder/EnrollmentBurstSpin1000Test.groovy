@@ -172,7 +172,7 @@ class EnrollmentBurstSpin1000Test {
 
         try {
             // [동적 파일명 생성] 인원수(TOTAL_USERS)와 시간(testStartTime) 조합
-            String fileName = String.format("/tmp/arrivals_%d_%s.txt", TOTAL_USERS, testStartTime)
+            String fileName = String.format("/tmp/result/arrivals_%d_%s.txt", TOTAL_USERS, testStartTime)
             File resultFile = new File(fileName)
             
             // 파일에 프로세스별 배열 기록
