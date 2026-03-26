@@ -14,10 +14,6 @@ import org.ngrinder.http.HTTPResponse
 import java.util.Collections
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ThreadLocalRandom
-import java.util.concurrent.atomic.AtomicIntegerArray
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.TimeZone
 
 @RunWith(GrinderRunner)
 class EnrollmentBurstWarmUpTest {
@@ -28,12 +24,6 @@ class EnrollmentBurstWarmUpTest {
 
     // 학생 ID 저장을 위한 큐
     public static ConcurrentLinkedQueue<Integer> studentIdQueue = new ConcurrentLinkedQueue<>()
-
-    // 실제 유입 카운트를 기록할 Thread-safe 배열 (넉넉하게 15초로 설정)
-    public static AtomicIntegerArray actualArrivals = new AtomicIntegerArray(15)
-
-    // 테스트 시작 시간을 기록할 변수
-    public static String testStartTime
 
     // 테스트 환경 설정
     public static final String TARGET_IP = "host.docker.internal"
@@ -62,10 +52,6 @@ class EnrollmentBurstWarmUpTest {
         request = new HTTPRequest()
         headers.put("Content-Type", "application/json")
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmm")
-        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"))
-        testStartTime = sdf.format(new Date())
-
         // [DB 데이터 클렌징] 프로세스 0에서만 초기화
         if (grinder.processNumber == 0) {
 
@@ -83,11 +69,6 @@ class EnrollmentBurstWarmUpTest {
             } catch (Exception e) {
                 grinder.logger.error(">>> [DB 초기화 에러] 원인: ${e.message}")
             }
-        }
-
-        // 매 프로세스 시작 시 실제 유입 카운트 배열 초기화
-        for (int i = 0; i < actualArrivals.length(); i++) {
-            actualArrivals.set(i, 0)
         }
 
         test.record(request)
@@ -119,12 +100,6 @@ class EnrollmentBurstWarmUpTest {
         double timeInSec = -Math.log(1 - u * (1 - Math.exp(-lambdaShape * maxTime))) / lambdaShape
         long randomDelay = (long) (timeInSec * 1000)
 
-        // [실제 유입 기록] 딜레이 시간을 초 단위로 환산하여 카운트 1 증가
-        int fireSecond = (int) (randomDelay / 1000)
-        if (fireSecond >= 0 && fireSecond < actualArrivals.length()) {
-            actualArrivals.incrementAndGet(fireSecond)
-        }
-
         // 계산된 시간만큼 대기 후 발사
         grinder.sleep(randomDelay, 0)
 
@@ -153,28 +128,6 @@ class EnrollmentBurstWarmUpTest {
         } else {
             grinder.logger.info(">>> [시스템 장애] 자원 고갈 [상태코드: ${statusCode}]]")
             fail("동시성 제어 실패: HTTP ${statusCode}")
-        }
-    }
-
-    @AfterProcess
-    public static void afterProcess() {
-
-        // 테스트 종료 시 10초간의 실제 유입량을 리스트로 변환하여 출력
-        List<Integer> actualList = []
-        for (int i = 0; i < TEST_DURATION_SECONDS; i++) {
-            actualList.add(actualArrivals.get(i))
-        }
-
-        try {
-            // [동적 파일명 생성] 인원수(TOTAL_USERS)와 시간(testStartTime) 조합
-            String fileName = String.format("/tmp/arrivals_%d_%s.txt", TOTAL_USERS, testStartTime)
-            File resultFile = new File(fileName)
-            
-            // 파일에 프로세스별 배열 기록
-            resultFile.append("Process " + grinder.processNumber + ": " + actualList.toString() + "\n")
-            
-        } catch (Exception e) {
-            // 무시
         }
     }
 }
