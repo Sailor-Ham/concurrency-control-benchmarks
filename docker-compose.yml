@@ -43,7 +43,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - JAVA_OPTS=-Xms768m -Xmx768m
+      - JAVA_OPTS=-Xms1536m -Xmx1536m
       - TZ=Asia/Seoul
     depends_on:
       mysql:
@@ -57,7 +57,7 @@ services:
       resources:
         limits:
           cpus: "2.0"
-          memory: 1024M
+          memory: 2048M
     restart: no
 
   # WAS#2
@@ -74,7 +74,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - JAVA_OPTS=-Xms768m -Xmx768m
+      - JAVA_OPTS=-Xms1536m -Xmx1536m
       - TZ=Asia/Seoul
     depends_on:
       mysql:
@@ -88,7 +88,7 @@ services:
       resources:
         limits:
           cpus: "2.0"
-          memory: 1024M
+          memory: 2048M
     restart: no
 
   # MySQL
@@ -255,7 +255,7 @@ services:
     container_name: ngrinder-agent
     command: ngrinder-controller:80
     environment:
-      - GRINDER_AGENT_JVM_OPTS=-Xms1g -Xmx1g
+      - GRINDER_AGENT_JVM_OPTS=-Xms4g -Xmx4g
     deploy:
       resources:
         limits:
