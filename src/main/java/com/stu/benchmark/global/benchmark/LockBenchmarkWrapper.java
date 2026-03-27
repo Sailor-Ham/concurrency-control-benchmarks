@@ -20,6 +20,7 @@ public class LockBenchmarkWrapper {
 	// Timer 인스턴스를 캐싱하여 매 요청마다 빌더 객체가 생성되는 오버헤드를 방지
 	private final ConcurrentHashMap<String, Timer> waitTimers = new ConcurrentHashMap<>();
 	private final ConcurrentHashMap<String, Timer> serviceTimers = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<String, Timer> totalTimers = new ConcurrentHashMap<>();
 
 	public void executeWithMetrics(
 		String lockType,
@@ -48,6 +49,7 @@ public class LockBenchmarkWrapper {
 		} finally {
 			long tComplete = System.nanoTime();
 			getServiceTimer(lockType).record(tComplete - tServiceStart, TimeUnit.NANOSECONDS);
+			getTotalTimer(lockType).record(tComplete - tArrival, TimeUnit.NANOSECONDS);
 
 			// 락 해제 중 예외가 발생해도 비즈니스 로직 결과에 영향을 주지 않도록 처리
 			if (lockReleaser != null) {
@@ -74,6 +76,16 @@ public class LockBenchmarkWrapper {
 		return serviceTimers.computeIfAbsent(lockType, type ->
 			Timer.builder("benchmark.lock.service.time")
 				.description("Lock Service Time (S)")
+				.tag("lock_type", type)
+				.publishPercentileHistogram()
+				.register(meterRegistry)
+		);
+	}
+
+	private Timer getTotalTimer(String lockType) {
+		return totalTimers.computeIfAbsent(lockType, type ->
+			Timer.builder("benchmark.lock.total.time")
+				.description("Total Response Time (W + S)")
 				.tag("lock_type", type)
 				.publishPercentileHistogram()
 				.register(meterRegistry)

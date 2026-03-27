@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stu.benchmark.domain.enrollment.dto.EnrollmentCreateRequest;
-import com.stu.benchmark.domain.enrollment.facade.PessimisticLockFacade;
 import com.stu.benchmark.domain.enrollment.facade.PubSubLockFacade;
 import com.stu.benchmark.domain.enrollment.facade.SpinLockFacade;
 import com.stu.benchmark.domain.enrollment.service.EnrollmentService;
@@ -22,7 +21,6 @@ public class EnrollmentController {
 
 	private final SpinLockFacade spinLockFacade;
 	private final PubSubLockFacade pubSubLockFacade;
-	private final PessimisticLockFacade pessimisticLockFacade;
 	private final EnrollmentService enrollmentService;
 
 	/**
@@ -43,7 +41,7 @@ public class EnrollmentController {
 	public ResponseEntity<String> enrollWithPessimisticLock(
 		@Valid @RequestBody EnrollmentCreateRequest request
 	) {
-		pessimisticLockFacade.enrollWithPessimisticLock(request);
+		enrollmentService.enrollWithPessimisticLock(request);
 		return ResponseEntity.ok("[Case 1: Pessimistic Lock] 수강신청이 성공적으로 완료되었습니다.");
 	}
 
