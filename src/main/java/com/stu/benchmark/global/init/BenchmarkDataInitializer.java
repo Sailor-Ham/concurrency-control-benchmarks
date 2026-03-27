@@ -71,7 +71,7 @@ public class BenchmarkDataInitializer implements CommandLineRunner {
 			Course savedCourse = courseRepository.save(
 				Course.builder()
 					.title("Concurrency Control")
-					.maxCapacity(100L)
+					.maxCapacity(200L)
 					.build()
 			);
 
