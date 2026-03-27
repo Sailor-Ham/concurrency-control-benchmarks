@@ -241,11 +241,7 @@ services:
     networks:
       - concurrency-control-network
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "wget -q --spider http://localhost:80 || exit 1",
-        ]
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:80 || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -259,11 +255,11 @@ services:
     container_name: ngrinder-agent
     command: ngrinder-controller:80
     environment:
-      - GRINDER_AGENT_JVM_OPTS=-Xms3g -Xmx3g
+      - GRINDER_AGENT_JVM_OPTS=-Xms1g -Xmx1g
     deploy:
       resources:
         limits:
-          memory: 4G
+          memory: 8G
     depends_on:
       ngrinder-controller:
         condition: service_healthy
