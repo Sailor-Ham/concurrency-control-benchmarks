@@ -20,7 +20,7 @@ import java.util.Date
 import java.util.TimeZone
 
 @RunWith(GrinderRunner)
-class EnrollmentBurstPessimistic500Test {
+class PubSub800Test {
 
     public static GTest test
     public static HTTPRequest request
@@ -40,19 +40,12 @@ class EnrollmentBurstPessimistic500Test {
     public static final String TARGET_PORT = "8080"
 
     // 실험 파라미터 설정 (테스트 시간: 10초)
-    // TODO: 테스트 인원수에 맞게 이 값을 500, 750, 1000으로 변경하세요.
-    public static final int TOTAL_USERS = 500
-    // public static final int TOTAL_USERS = 750
-    // public static final int TOTAL_USERS = 1000
+    public static final int TOTAL_USERS = 800
 
     public static final int TEST_DURATION_SECONDS = 10
 
     // 테스트 전략 선택
-    // TODO: 테스트 전략에 맞게 값을 변경하세요.
-    // public static final String STRATEGY = "no-lock"
-    public static final String STRATEGY = "pessimistic-lock"
-    // public static final String STRATEGY = "spin-lock"
-    // public static final String STRATEGY = "pub-sub-lock"
+    public static final String STRATEGY = "pub-sub-lock"
 
     public static String targetUrl = "http://${TARGET_IP}:${TARGET_PORT}/v1/enrollments/${STRATEGY}"
     public static String resetUrl = "http://${TARGET_IP}:${TARGET_PORT}/v1/benchmarks/reset"
