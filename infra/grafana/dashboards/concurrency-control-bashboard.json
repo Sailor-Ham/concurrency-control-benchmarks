@@ -537,7 +537,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (lock_type) (irate(benchmark_lock_service_time_seconds_sum{job=\"concurrency-control\"}[1m])) \n/ \nsum by (lock_type) (irate(benchmark_lock_service_time_seconds_count{job=\"concurrency-control\"}[1m]))",
+          "expr": "sum by (lock_type) (\n  irate(benchmark_lock_total_time_seconds_sum{job=\"concurrency-control\"}[1m])\n) \n/ \nsum by (lock_type) (\n  irate(benchmark_lock_total_time_seconds_count{job=\"concurrency-control\"}[1m])\n)",
           "legendFormat": "{{lock_type}}",
           "range": true,
           "refId": "A"
@@ -789,7 +789,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (le, lock_type) (irate(benchmark_lock_service_time_seconds_bucket{job=\"concurrency-control\"}[1m])))",
+          "expr": "histogram_quantile(0.95, \n  sum by (le, lock_type) (\n    irate(benchmark_lock_total_time_seconds_bucket{job=\"concurrency-control\"}[1m])\n  )\n)",
           "legendFormat": "{{lock_type}}",
           "range": true,
           "refId": "A"
@@ -816,7 +816,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "락 획득 시도부터 획득 성공 직전까지의 시간 (W)",
+      "description": "락 획득 시도부터 획득 성공 직전까지의 시간 (W)\n\n락 획득을 위한 경합 시간 (Queueing Delay)",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1069,7 +1069,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "락 획득 후 로직 수행 및 트랜잭션 종료까지의 시간 (S)",
+      "description": "락 획득 후 로직 수행 및 트랜잭션 종료까지의 시간 (S)\n\n락 점유 후 순수 로직 실행 시간 (Processing Time). * Pessimistic Lock의 경우 구조적 한계로 인해 Wait Time이 Service Time에 포함되어 측정됨을 주의할 것.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1599,6 +1599,6 @@
   "timezone": "browser",
   "title": "Concurrency Control Dashboard",
   "uid": "stf9n6w",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
