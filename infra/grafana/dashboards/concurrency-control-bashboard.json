@@ -250,6 +250,28 @@
                 }
               }
             ]
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": ["pessimistic"],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
           }
         ]
       },
@@ -1043,7 +1065,9 @@
           "calcs": [],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Name",
+          "sortDesc": true
         },
         "tooltip": {
           "hideZeros": false,
@@ -1548,6 +1572,21 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Redis CPU Usage"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#ffffff",
+                  "mode": "fixed"
+                }
+              }
+            ]
           }
         ]
       },
@@ -1576,7 +1615,7 @@
         {
           "editorMode": "code",
           "expr": "irate(redis_cpu_user_seconds_total[1m]) + irate(redis_cpu_sys_seconds_total[1m])",
-          "legendFormat": "Redis",
+          "legendFormat": "Redis CPU Usage",
           "range": true,
           "refId": "A"
         }
@@ -1600,6 +1639,6 @@
   "timezone": "browser",
   "title": "Concurrency Control Dashboard",
   "uid": "stf9n6w",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
