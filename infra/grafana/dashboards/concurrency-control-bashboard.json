@@ -250,28 +250,6 @@
                 }
               }
             ]
-          },
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": ["pessimistic"],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": true,
-                  "viz": true
-                }
-              }
-            ]
           }
         ]
       },
@@ -1639,6 +1617,6 @@
   "timezone": "browser",
   "title": "Concurrency Control Dashboard",
   "uid": "stf9n6w",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
