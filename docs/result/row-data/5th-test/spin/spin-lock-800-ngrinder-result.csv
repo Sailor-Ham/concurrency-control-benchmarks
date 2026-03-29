@@ -1,0 +1,5 @@
+DateTime,vuser,Tests,Errors,Mean_Test_Time_(ms),Test_Time_Standard_Deviation_(ms),TPS,Mean_response_length,Response_bytes_per_second,Response_errors,Mean_time_to_resolve_host,Mean_time_to_establish_connection,Mean_time_to_first_byte
+2026-03-29 21:13:29,712,166,0,613.47,472.935,83,74,6142,0,0,151.181,177.307
+2026-03-29 21:13:31,109,525,0,1432.139,403.323,262.5,159.107,41765.5,491,0,345.339,457.623
+2026-03-29 21:13:33,2,107,0,971.093,280.905,53.5,165,8827.5,107,0,212.701,255.813
+2026-03-29 21:13:35,0,2,0,11,1,1,165,165,2,0,3,4.5
