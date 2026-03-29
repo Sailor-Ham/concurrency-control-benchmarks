@@ -50,6 +50,8 @@ class SpinWarmUpTest {
         request = new HTTPRequest()
         headers.put("Content-Type", "application/json")
 
+        long beforeStartTime = System.currentTimeMillis()   // 진입 시간 기록
+
         // [DB 데이터 클렌징] 프로세스 0에서만 초기화
         if (grinder.processNumber == 0) {
 
@@ -67,6 +69,17 @@ class SpinWarmUpTest {
             } catch (Exception e) {
                 grinder.logger.error(">>> [DB 초기화 에러] 원인: ${e.message}")
             }
+        }
+
+        // 모든 프로세스가 각자 소모한 시간 계산
+        long elapsed = System.currentTimeMillis() - beforeStartTime
+
+        // 목표 대기 시간(3초)에서 소모한 시간(DB 초기화 등)을 뺀 만큼만 정확히 마저 대기
+        long waitTime = 3000 - elapsed
+
+        if (waitTime > 0) {
+            grinder.logger.info(">>> [대기] 프로세스 ${grinder.processNumber} : 완벽한 동시 출발을 위해 ${waitTime}ms 대기 중...")
+            grinder.sleep(waitTime, 0)
         }
 
         test.record(request)

@@ -20,7 +20,7 @@ import java.util.Date
 import java.util.TimeZone
 
 @RunWith(GrinderRunner)
-class PubSub1000Test {
+class PubSub800Test {
 
     public static GTest test
     public static HTTPRequest request
@@ -40,7 +40,7 @@ class PubSub1000Test {
     public static final String TARGET_PORT = "8080"
 
     // 실험 파라미터 설정 (테스트 시간: 10초)
-    public static final int TOTAL_USERS = 1000
+    public static final int TOTAL_USERS = 800
 
     public static final int TEST_DURATION_SECONDS = 10
 
@@ -64,6 +64,8 @@ class PubSub1000Test {
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"))
         testStartTime = sdf.format(new Date())
 
+        long beforeStartTime = System.currentTimeMillis()   // 진입 시간 기록
+
         // [DB 데이터 클렌징] 프로세스 0에서만 초기화
         if (grinder.processNumber == 0) {
 
@@ -81,6 +83,17 @@ class PubSub1000Test {
             } catch (Exception e) {
                 grinder.logger.error(">>> [DB 초기화 에러] 원인: ${e.message}")
             }
+        }
+
+        // 모든 프로세스가 각자 소모한 시간 계산
+        long elapsed = System.currentTimeMillis() - beforeStartTime
+
+        // 목표 대기 시간(3초)에서 소모한 시간(DB 초기화 등)을 뺀 만큼만 정확히 마저 대기
+        long waitTime = 3000 - elapsed
+
+        if (waitTime > 0) {
+            grinder.logger.info(">>> [대기] 프로세스 ${grinder.processNumber} : 완벽한 동시 출발을 위해 ${waitTime}ms 대기 중...")
+            grinder.sleep(waitTime, 0)
         }
 
         // 매 프로세스 시작 시 실제 유입 카운트 배열 초기화
@@ -166,8 +179,8 @@ class PubSub1000Test {
         }
 
         try {
-            // [동적 파일명 생성] 인원수(TOTAL_USERS)와 시간(testStartTime) 조합
-            String fileName = String.format("/tmp/result/arrivals_%d_%s.txt", TOTAL_USERS, testStartTime)
+            // [동적 파일명 생성] 락 전략(STRATEGY), 인원수(TOTAL_USERS), 시작 시간(testStartTime) 조합
+            String fileName = String.format("/tmp/result/arrivals_%s_%d_%s.txt", STRATEGY, TOTAL_USERS, testStartTime)
             File resultFile = new File(fileName)
             
             // 파일에 프로세스별 배열 기록
