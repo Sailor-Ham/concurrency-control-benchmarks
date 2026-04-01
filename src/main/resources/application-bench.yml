@@ -1,7 +1,7 @@
 spring:
   datasource:
     hikari:
-      # Tomcat ㅅ스레드(200)에 대응하여 커넥션 부족 에러 방지
+      # Tomcat 스레드(200)에 대응하여 커넥션 부족 에러 방지
       maximum-pool-size: 150
       connection-timeout: 5000
   data:
