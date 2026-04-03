@@ -51,9 +51,9 @@ def calculate_run_metrics(group):
         sigma_log = np.sqrt(np.log(1 + (v / (m ** 2))))
         mu_log = np.log(m) - (sigma_log ** 2) / 2
 
-    # 4. 최종 p95 계산
-    # 정규분포에서 상위 5% 지점을 가리키는 Z-Score(1.65585)를 곱해서 가장 느린 축에 속하는 응답시간 검색
-    p95 = np.exp(mu_log + 1.64485 * sigma_log)
+        # 4. 최종 p95 계산
+        # 정규분포에서 상위 5% 지점을 가리키는 Z-Score(1.64485)를 곱해서 가장 느린 축에 속하는 응답시간 검색
+        p95 = np.exp(mu_log + 1.64485 * sigma_log)
 
     # 계산된 평균 지연 시간과 p95 꼬리 지연 시간을 결과로 반환
     return pd.Series({'Run_Mean_Latency': mu_total, 'Run_p95_Latency': p95})
@@ -84,7 +84,7 @@ def analyze_latency(df_all):
 
     os.makedirs('../data/results', exist_ok=True)
 
-    current_time = datetime.now().strftime('%Y%m%d-%H%M%S')
+    current_time = datetime.now().strftime('%Y%m%d_%H%M%S')
     file_name = f'../data/results/latency_results_{current_time}.csv'
 
     summary_stats.to_csv(file_name, index=False, encoding='utf-8-sig')
@@ -146,6 +146,6 @@ def analyze_latency(df_all):
     img_name = f'../data/figures/latency_graph_{current_time}.png'
 
     plt.savefig(img_name, dpi=300, bbox_inches='tight')
-    print(f"Latency 그래프가 '{img_name}로 저장되었습니다.")
+    print(f"Latency 그래프가 '{img_name}'로 저장되었습니다.")
 
     plt.show()

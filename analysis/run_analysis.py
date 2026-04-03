@@ -1,3 +1,4 @@
+import platform
 import matplotlib.pyplot as plt
 
 from latency_analysis import analyze_latency
@@ -5,8 +6,14 @@ from preprocess import load_all_data
 from stability_analysis import analyze_stability
 from tps_analysis import analyze_tps
 
-# 시각화(그래프) 공통 설정
-plt.rcParams['font.family'] = 'AppleGothic'
+# 시각화(그래프) 공통 설정: 운영체제별 한글 폰트 자동 설정
+_os = platform.system()
+if _os == 'Darwin':
+    plt.rcParams['font.family'] = 'AppleGothic'
+elif _os == 'Windows':
+    plt.rcParams['font.family'] = 'Malgun Gothic'
+else:
+    plt.rcParams['font.family'] = 'DejaVu Sans'
 plt.rcParams['axes.unicode_minus'] = False
 
 if __name__ == "__main__":
