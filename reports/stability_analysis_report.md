@@ -18,7 +18,7 @@
 |                      |  800  |        973.87        |      497.0      |      86.32      |     1967.88     |
 |                      | 1000  |       1152.08        |     539.01      |     119.05      |     2230.1      |
 
-![Stability 그래프](../data/figures/stability_graph_20260401_025046.png)
+![Stability 그래프](../data/figures/stability_graph_20260403_200130.png)
 
 ---
 
