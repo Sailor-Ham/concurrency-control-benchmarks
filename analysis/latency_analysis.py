@@ -120,7 +120,7 @@ def analyze_latency(df_all):
 
     # 막대기(container) 위에 수치 삽입
     for container in axes[0].containers:
-        axes[0].bar_label(container, fmt='%.2f', padding=3, fontsize=10)  # 소수점 둘째자리까지 표기
+        axes[0].bar_label(container, fmt='%.2f', padding=3, fontsize=9, rotation=90)  # 소수점 둘째자리까지 표기
 
     # 글씨가 그래프 천장에 붙지 않도록 위쪽 여백(margins) 15% 넉넉하게 줌
     axes[0].margins(y=0.15)
@@ -135,7 +135,7 @@ def analyze_latency(df_all):
 
     # 막대기(container) 위에 수치 삽입
     for container in axes[1].containers:
-        axes[1].bar_label(container, fmt='%.2f', padding=3, fontsize=10)  # 소수점 둘째자리까지 표기
+        axes[1].bar_label(container, fmt='%.2f', padding=3, fontsize=9, rotation=90)  # 소수점 둘째자리까지 표기
 
     # 글씨가 그래프 천장에 붙지 않도록 위쪽 여백(margins) 15% 넉넉하게 줌
     axes[1].margins(y=0.15)
