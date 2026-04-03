@@ -26,6 +26,15 @@ spring:
     hibernate:
       ddl-auto: validate
 
+zookeeper:
+  host: ${ZOOKEEPER_HOST:localhost}
+  port: ${ZOOKEEPER_PORT:2181}
+  session-timeout: 15000 # 세션 유지 시간 - 네트워크 단절 시 임시 노드 유지 기준
+  connection-timeout: 5000 # 연결 대기 시간
+  retry:
+    max-retries: 3 # 최대 재시도 횟수
+    base-sleep-time: 1000 # 재시도 간 기본 대기 시간
+
 server:
   port: 8080
   tomcat:

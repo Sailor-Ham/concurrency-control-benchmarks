@@ -35,6 +35,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // Zookeeper
+    implementation 'org.apache.curator:curator-framework:5.6.0'
+    implementation 'org.apache.curator:curator-recipes:5.6.0'
+
     // Monitoring & Tracing
     implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
