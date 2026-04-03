@@ -31,7 +31,3 @@ logging:
     org.hibernate.SQL: error
     com.zaxxer.hikari: debug
     org.hibernate.orm.jdbc.bind: error
-
-management:
-  tracing:
-    enabled: false

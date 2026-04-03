@@ -26,6 +26,7 @@ repositories {
 dependencies {
     // Web & Validation
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // Persistence
@@ -38,10 +39,6 @@ dependencies {
     // Zookeeper
     implementation 'org.apache.curator:curator-framework:5.6.0'
     implementation 'org.apache.curator:curator-recipes:5.6.0'
-
-    // Monitoring & Tracing
-    implementation 'io.micrometer:micrometer-registry-prometheus'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     // Tools
     compileOnly 'org.projectlombok:lombok'
