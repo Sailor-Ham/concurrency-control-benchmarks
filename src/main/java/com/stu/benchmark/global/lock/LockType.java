@@ -9,6 +9,8 @@ public enum LockType {
 
 	LETTUCE("lock:lettuce:course:"),
 	REDISSON("lock:redisson:course:"),
+
+	ZOOKEEPER("/locks/zookeeper/course/"),
 	;
 
 	private final String prefix;

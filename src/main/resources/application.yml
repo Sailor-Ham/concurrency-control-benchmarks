@@ -34,6 +34,8 @@ zookeeper:
   retry:
     max-retries: 3 # 최대 재시도 횟수
     base-sleep-time: 1000 # 재시도 간 기본 대기 시간
+  lock:
+    wait-time: 5000
 
 server:
   port: 8080
