@@ -5,7 +5,6 @@ import net.grinder.script.GTest
 import net.grinder.scriptengine.groovy.junit.GrinderRunner
 import net.grinder.scriptengine.groovy.junit.annotation.BeforeProcess
 import net.grinder.scriptengine.groovy.junit.annotation.AfterProcess
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.ngrinder.http.HTTPRequest
@@ -108,7 +107,9 @@ class ZooKeeper500Test {
         int usersPerProcess = TOTAL_USERS / totalProcesses
 
         int startId = (grinder.processNumber * usersPerProcess) + 1
-        int endId = (grinder.processNumber + 1) * usersPerProcess
+        int endId = (grinder.processNumber == totalProcesses - 1)
+            ? TOTAL_USERS
+            : (grinder.processNumber + 1) * usersPerProcess
 
         List<Integer> studentIds = (startId..endId).toList()
         Collections.shuffle(studentIds) // 학생 ID 랜덤 섞기
@@ -164,7 +165,7 @@ class ZooKeeper500Test {
         } else if (statusCode == 400 || statusCode == 409) {
             grinder.logger.info(">>> [비즈니스 예외] 정원 초과 [상태코드: ${statusCode}]")
         } else {
-            grinder.logger.info(">>> [시스템 장애] 자원 고갈 [상태코드: ${statusCode}]]")
+            grinder.logger.info(">>> [시스템 장애] 자원 고갈 [상태코드: ${statusCode}]")
             fail("동시성 제어 실패: HTTP ${statusCode}")
         }
     }
@@ -182,6 +183,7 @@ class ZooKeeper500Test {
             // [동적 파일명 생성] 락 전략(STRATEGY), 인원수(TOTAL_USERS), 시작 시간(testStartTime) 조합
             String fileName = String.format("/tmp/result/arrivals_%s_%d_%s.txt", STRATEGY, TOTAL_USERS, testStartTime)
             File resultFile = new File(fileName)
+            resultFile.parentFile.mkdirs()
             
             // 파일에 프로세스별 배열 기록
             resultFile.append("Process " + grinder.processNumber + ": " + actualList.toString() + "\n")

@@ -4,8 +4,6 @@ import static org.hamcrest.Matchers.*
 import net.grinder.script.GTest
 import net.grinder.scriptengine.groovy.junit.GrinderRunner
 import net.grinder.scriptengine.groovy.junit.annotation.BeforeProcess
-import net.grinder.scriptengine.groovy.junit.annotation.AfterProcess
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.ngrinder.http.HTTPRequest
@@ -139,7 +137,7 @@ class ZooKeeperWarmUpTest {
         } else if (statusCode == 400 || statusCode == 409) {
             grinder.logger.info(">>> [비즈니스 예외] 정원 초과 [상태코드: ${statusCode}]")
         } else {
-            grinder.logger.info(">>> [시스템 장애] 자원 고갈 [상태코드: ${statusCode}]]")
+            grinder.logger.info(">>> [시스템 장애] 자원 고갈 [상태코드: ${statusCode}]")
             fail("동시성 제어 실패: HTTP ${statusCode}")
         }
     }
